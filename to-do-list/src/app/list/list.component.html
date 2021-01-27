@@ -1,0 +1,44 @@
+<div class="row">
+    <div class="col-12">
+        <div class="input-group mb-3">
+            <input 
+            type="text"
+            #cenasInput>
+            <!-- <button 
+            class="btn btn-primary" 
+            (click)="onGo(cenasInput)">Go</button> -->
+        </div>
+        <!-- <button 
+        class="btn btn-danger" 
+        (click)="onClear()">Clear List</button> -->
+        <!-- <button 
+        class="btn btn-warning" 
+        (click)="onRemoveItem()">Remove Item</button>
+        <br><br> -->
+        <ul class="list-group">
+            <li 
+            class="list-group-item"
+            *ngFor="let element of listaElement; let i=index">
+            <div class="row">
+                <div class="col-xs">
+                    <div class="form-check">
+                        <input type="checkbox" (change)="onCheckboxClick(element)">
+                    </div>
+                </div>
+                <div class="col"
+                    [class.strikethrough]=" element.Estado === true"
+                    >
+                    {{ element.Id }}
+                    {{ element.Nome }}
+                </div>
+                <div class="float-right">
+                    <button 
+                        class="btn btn-warning" 
+                        (click)="onRemoveItem(i)">Delete
+                    </button>
+                </div>
+            </div>
+        </li>
+        </ul>
+    </div>
+</div>
