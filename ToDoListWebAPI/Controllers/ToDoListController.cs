@@ -27,7 +27,7 @@ namespace ToDoListWebAPI.Controllers
         public JsonResult Get()
         {
             string query = @"
-                    select Id, Nome, Estado from dbo.Lista";
+                    select id, Nome, Estado from dbo.Lista";
             DataTable table = new DataTable();
             // Defenir uma variável para guardar a informãção que vamos receber da BD
             string sqlDataSource = _configuration.GetConnectionString("ToDoListAppCon");
@@ -85,7 +85,7 @@ namespace ToDoListWebAPI.Controllers
         {
             string query = @"
                    update dbo.Lista 
-                   set Nome= @Nome
+                   set Nome= @Nome, Estado=@Estado
                    where id= @Id";
             DataTable table = new DataTable();
             // Defenir uma variável para guardar a informãção que vamos receber da BD
@@ -97,7 +97,8 @@ namespace ToDoListWebAPI.Controllers
                 using (SqlCommand myCommand = new SqlCommand(query, myCon))
                 {
                     myCommand.Parameters.AddWithValue("@Nome", list.Nome);
-                    myCommand.Parameters.AddWithValue("@Id", list.Id);
+                    myCommand.Parameters.AddWithValue("@Estado", list.Estado);
+                    myCommand.Parameters.AddWithValue("@id", list.id);
                     myReader = myCommand.ExecuteReader();
                     table.Load(myReader);
 
@@ -114,7 +115,7 @@ namespace ToDoListWebAPI.Controllers
         {
             string query = @"
                    delete from dbo.Lista 
-                   where id= @Id";
+                   where id= @id";
             DataTable table = new DataTable();
             // Defenir uma variável para guardar a informãção que vamos receber da BD
             string sqlDataSource = _configuration.GetConnectionString("ToDoListAppCon");
@@ -124,7 +125,7 @@ namespace ToDoListWebAPI.Controllers
                 myCon.Open();
                 using (SqlCommand myCommand = new SqlCommand(query, myCon))
                 {
-                    myCommand.Parameters.AddWithValue("@Id", id);
+                    myCommand.Parameters.AddWithValue("@id", id);
                     myReader = myCommand.ExecuteReader();
                     table.Load(myReader);
 

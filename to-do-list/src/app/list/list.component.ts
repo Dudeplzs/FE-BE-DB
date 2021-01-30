@@ -1,6 +1,7 @@
 import { ServiceSharedService } from './../service-shared.service';
 import { LogService } from './../logg.service';
 import { Component, OnInit } from '@angular/core';
+import { ListElement } from './list-interface.model';
 
 @Component({
   selector: 'app-list',
@@ -8,9 +9,11 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./list.component.css']
 })
 export class ListComponent implements OnInit {
-  // lista: ListElement [] = [];
-  // checkBoxStatus = false;
-  listaElement: any = [];
+  lista: ListElement [] = [];
+  elementEstado = false;
+  // listaElement: any = [];
+  
+
 
   constructor(private logservice: LogService,
               private serviceShare: ServiceSharedService) { }
@@ -23,16 +26,21 @@ export class ListComponent implements OnInit {
   // tslint:disable-next-line: typedef
   refreshLista(){
     this.serviceShare.getLista().subscribe(
-      data => { this.listaElement = data;
-      });
+      data => { this.lista = data});
+      // window.location.reload();
+    // console.log(this.lista);
   }
 
   // tslint:disable-next-line: typedef
-  // onGo(nameInput: HTMLInputElement){
-  //   const listElement: ListElement = {text: nameInput.value, status: false};
-  //   this.lista.push(listElement);
-  //   console.log(this.lista);
-  // }
+  onAdd(nameInput: HTMLInputElement){
+    const listElement: ListElement = {id: 0, Nome: nameInput.value, Estado: false};
+    this.serviceShare.addLista(listElement).subscribe(res=>{
+      alert(res.toString());
+    });
+    // this.refreshLista();
+    window.location.reload();
+    // console.log(listElement);
+  }
 
   // tslint:disable-next-line: typedef
   // onClear(){
@@ -40,25 +48,23 @@ export class ListComponent implements OnInit {
   // }
 
   // tslint:disable-next-line: typedef
-  // onRemoveItem(index: number){
-  //   this.lista.splice(index, 1);
-  // }
+  onRemoveItem(elementId: number){
+    this.serviceShare.DeleteListaElement(elementId).subscribe(data=>{
+      alert(data.toString())
+    });
+    // this.refreshLista();
+    window.location.reload();
+  }
 
   // tslint:disable-next-line: typedef
-  onCheckboxClick(element: any){
+  onStateChange(element: ListElement){
     element.Estado = !element.Estado;
-    // var var = {}
-    this.serviceShare.updateLista(element);
-    // this.lista[index];
-    // this.logservice.logChange(element.text, element.status);
-    console.log();
+    this.serviceShare.updateLista(element).subscribe(res=>{
+      alert(res.toString());
+    });
+    // console.log(element);
   }
 
 
 }
 
-// export interface ListElement{
-//   id: number;
-//   text: string;
-//   status: boolean;
-// }
