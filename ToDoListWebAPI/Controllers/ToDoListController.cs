@@ -21,7 +21,6 @@ namespace ToDoListWebAPI.Controllers
         }
 
         [HttpGet]
-
         public JsonResult Get()
         {
 
@@ -29,113 +28,25 @@ namespace ToDoListWebAPI.Controllers
             return new JsonResult(dt);
         }
 
-
-
-        /* [HttpPost]
+        [HttpPost]
          public JsonResult Post(Lista list)
          {
-             //string query = @"
-             //        insert into dbo.Lista (Nome, Estado) values 
-             //        ('"+ list.Nome+@"', '"+list.Estado+@"')
-             //        ";
-             DataTable table = new DataTable();
-             // Defenir uma variável para guardar a informãção que vamos receber da BD
-             string sqlDataSource = _configuration.GetConnectionString("ToDoListAppCon");
-             using (SqlConnection myCon = new SqlConnection(sqlDataSource))
-             try
-             {
-                 string query = @"
-                    insert into dbo.Lista (Nome, Estado) values
-                    (@Nome,@Estado)";
-                 SqlDataReader myReader;
-                     myCon.Open();
-                     using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                     {
-                         myCommand.Parameters.AddWithValue("@Nome", list.Nome);
-                         myCommand.Parameters.AddWithValue("@Estado", list.Estado);
-                         myReader = myCommand.ExecuteReader();
-                         table.Load(myReader);
-                         myReader.Close();
-                     }
-             }
-             catch(Exception ex)
-             {
-                 Console.WriteLine(ex);
-             }
-             finally {
-                 myCon.Close();
-             }
-             return new JsonResult("Added Succefully");
-         }
+            string added = new ToDoListDAL(_configuration).Added(list);
+            return new JsonResult(added);
+        }
 
-         [HttpPut]
-         public JsonResult Put(Lista list)
-         {
+        [HttpPut]
+        public JsonResult Put(Lista list)
+        {
+            string updated = new ToDoListDAL(_configuration).Updated(list);
+            return new JsonResult(updated);
+        }
 
-             DataTable table = new DataTable();
-             // Defenir uma variável para guardar a informãção que vamos receber da BD
-             string sqlDataSource = _configuration.GetConnectionString("ToDoListAppCon");
-             SqlDataReader myReader;
-             using (SqlConnection myCon = new SqlConnection(sqlDataSource))
-             try
-             {
-                 string query = @"
-                    update dbo.Lista 
-                    set Nome= @Nome, Estado=@Estado
-                    where id= @Id";
-                 myCon.Open();
-                 using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                 {
-                     myCommand.Parameters.AddWithValue("@Nome", list.Nome);
-                     myCommand.Parameters.AddWithValue("@Estado", list.Estado);
-                     myCommand.Parameters.AddWithValue("@id", list.id);
-                     myReader = myCommand.ExecuteReader();
-                     table.Load(myReader);
-                     myReader.Close();
-                 }
-             }
-             catch(Exception ex)
-             {
-                     Console.WriteLine(ex);
-             }
-             finally
-             {
-                 myCon.Close();
-             }
-             return new JsonResult("Updated Succefully");
-         }
-
-         [HttpDelete ("{id}")]
-         public JsonResult Delete(int id)
-         {
-
-             DataTable table = new DataTable();
-             // Defenir uma variável para guardar a informãção que vamos receber da BD
-             string sqlDataSource = _configuration.GetConnectionString("ToDoListAppCon");
-             SqlDataReader myReader;
-             using (SqlConnection myCon = new SqlConnection(sqlDataSource))
-             try{
-                 string query = @"
-                    delete from dbo.Lista 
-                    where id= @id";
-                 myCon.Open();
-                 using (SqlCommand myCommand = new SqlCommand(query, myCon))
-                 {
-                     myCommand.Parameters.AddWithValue("@id", id);
-                     myReader = myCommand.ExecuteReader();
-                     table.Load(myReader);
-                     myReader.Close();
-                 }
-                 }
-                 catch (Exception ex)
-                 { 
-                     Console.WriteLine(ex);
-                 }
-                 finally
-                 {
-                     myCon.Close();
-                 }
-             return new JsonResult("Delete Succefully");
-         }*/
+        [HttpDelete ("{id}")]
+        public JsonResult Delete(int id)
+        {
+            string deleted = new ToDoListDAL(_configuration).Delete(id);
+            return new JsonResult(deleted);
+        }
     }
 }   

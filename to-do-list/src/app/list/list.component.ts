@@ -34,11 +34,12 @@ export class ListComponent implements OnInit {
   // tslint:disable-next-line: typedef
   onAdd(nameInput: HTMLInputElement){
     const listElement: ListElement = {id: 0, Nome: nameInput.value, Estado: false};
-    this.serviceShare.addLista(listElement).subscribe(res=>{
-      alert(res.toString());
+    this.serviceShare.addLista(listElement).subscribe(
+      res=>{alert(res.toString());
+      this.ngOnInit();
     });
-    // this.refreshLista();
-    window.location.reload();
+   
+    // window.location.reload();
     // console.log(listElement);
   }
 
@@ -49,11 +50,11 @@ export class ListComponent implements OnInit {
 
   // tslint:disable-next-line: typedef
   onRemoveItem(elementId: number){
-    this.serviceShare.DeleteListaElement(elementId).subscribe(data=>{
-      alert(data.toString())
+    this.serviceShare.DeleteListaElement(elementId).subscribe(
+      data=>{alert(data.toString());
+        this.ngOnInit();
     });
-    // this.refreshLista();
-    window.location.reload();
+    // window.location.reload();
   }
 
   // tslint:disable-next-line: typedef
