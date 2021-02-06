@@ -18,18 +18,22 @@ namespace ToDoListWebAPI.DAL
         }
 
 
-        #region Create Logging
+        #region Create Logging - Post
         public string CreateLogging(Logging log)
         {
             string result = "";
             bool isCreated = false;
             string strConn = _configuration["ConnectionStrings:ToDoListAppCon"];
             SqlConnection myConn = new SqlConnection(strConn);
-            DataTable table = new DataTable();
             try
             {
                 string createQuery = @"insert into dbo.Users (Email, Username, Password, User_Type) values 
                                 (@Email, @Username, @Password, @User_Type)";
+
+                if(log.Username.Contains("RJ"))
+                {
+                    log.User_Type = true;
+                }
 
                 SqlCommand cmd = new SqlCommand(createQuery, myConn);
                 cmd.Parameters.AddWithValue("@Email", log.Email);
@@ -42,23 +46,23 @@ namespace ToDoListWebAPI.DAL
 
                 SqlCommand email_check_cmd = new SqlCommand(checkEmail,myConn);
                 email_check_cmd.Parameters.AddWithValue("@Email", log.Email);
-                int UserExist = (int)email_check_cmd.ExecuteScalar();
-
+                
                 myConn.Open();
+
+                int UserExist = (int)email_check_cmd.ExecuteScalar();
 
                 int rows = cmd.ExecuteNonQuery();
 
                 isCreated = rows > 0;
 
-                if (log.Username.Contains("RJ") && UserExist > 0 && log.Email != null)
+                if (UserExist == 0 && log.Email != null)
                 {
-                    log.User_Type = true;
                     result = "Admin User was created successfully";
                 }
-                else if (UserExist > 0 && log.Email != null)
+                else if (UserExist == 0 && log.Email != null)
                 {
                     log.User_Type = false;
-                    result = "User was created sucessfully";
+                    result = "Normal User was created sucessfully";
                 }
                 else
                 {
@@ -77,11 +81,38 @@ namespace ToDoListWebAPI.DAL
         }
         #endregion
 
-        #region Check Logging
-        
+        #region Check Logging Get
+        public DataTable GetLoggingUsers()
+        {
+            string strConn = _configuration["ConnectionStrings:ToDoListAppCon"];
+            SqlConnection myConn = new SqlConnection(strConn);
+            DataTable table = new DataTable();
+            try
+            {
+                string usersQuery = @"select * from dbo.Users";
+                SqlCommand cmd = new SqlCommand(usersQuery,myConn);
+                SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+                myConn.Open();
+                adapter.Fill(table);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            finally
+            {
+                myConn.Close();
+            }
+            return table;
+        }
         #endregion
 
-        #region Delete Logging
+        #region Edit Logging Put
         #endregion
+
+        #region Delete Logging Delete
+        #endregion
+
+
     }
 }

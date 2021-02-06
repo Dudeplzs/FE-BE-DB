@@ -9,8 +9,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace ToDoListWebAPI.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
+   
     public class ToDoListController : ControllerBase
     {
 
@@ -27,12 +28,24 @@ namespace ToDoListWebAPI.Controllers
             DataTable dt = new ToDoListDAL(_configuration).GetData();
             return new JsonResult(dt);
         }
+        [HttpGet("Users")]
+        public JsonResult CheckLogging()
+        {
+            DataTable loggingUsers = new UserDAL(_configuration).GetLoggingUsers();
+            return new JsonResult(loggingUsers);
+        }
 
         [HttpPost]
          public JsonResult Post(Lista list)
          {
             string added = new ToDoListDAL(_configuration).Added(list);
             return new JsonResult(added);
+        }
+        [HttpPost("Users")]
+        public JsonResult CreateLogging(Logging log)
+        {
+            string createLogging = new UserDAL(_configuration).CreateLogging(log);
+            return new JsonResult(createLogging);
         }
 
         [HttpPut]
