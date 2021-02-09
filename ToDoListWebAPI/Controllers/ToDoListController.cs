@@ -55,11 +55,25 @@ namespace ToDoListWebAPI.Controllers
             return new JsonResult(updated);
         }
 
+        [HttpPut("USers")]
+        public JsonResult EditUSer(Logging log)
+        {
+            string editUser = new UserDAL(_configuration).EditUser(log);
+            return new JsonResult(editUser);
+        }
+
         [HttpDelete ("{id}")]
         public JsonResult Delete(int id)
         {
             string deleted = new ToDoListDAL(_configuration).Delete(id);
             return new JsonResult(deleted);
+        }
+
+        [HttpDelete("Users/{id}")]
+        public JsonResult DeleteUser(int id)
+        {
+            string userDelete = new UserDAL(_configuration).DeleteUser(id);
+            return new JsonResult(userDelete);
         }
     }
 }   
