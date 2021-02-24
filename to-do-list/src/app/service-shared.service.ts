@@ -1,7 +1,8 @@
 import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ListElement } from './list/list-interface.model';
+import { Users } from './users/user-interface.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,9 +18,22 @@ export class ServiceSharedService {
     
   }
 
+  getUsers(): Observable<Users[]>{
+    return this.http.get<Users[]>(this.APIUrl + '/ToDoList/Admin' );
+  }
+
   // tslint:disable-next-line: typedef
   addLista(val: ListElement){
     return this.http.post(this.APIUrl + '/ToDoList', val);
+  }
+
+  login(user : Users){
+    user.Roles = "Standard";
+    return this.http.post(this.APIUrl + '/ToDoList/login', user);
+  }
+
+  getToken(){
+    return localStorage.getItem('token');
   }
 
   // tslint:disable-next-line: typedef

@@ -19,7 +19,7 @@ export class ListComponent implements OnInit {
               private serviceShare: ServiceSharedService) { }
 
   // tslint:disable-next-line: typedef
-  ngOnInit(): void {
+  ngOnInit() {
     this.refreshLista();
   }
 
@@ -38,7 +38,7 @@ export class ListComponent implements OnInit {
       res=>{alert(res.toString());
       this.ngOnInit();
     });
-   
+    
     // window.location.reload();
     // console.log(listElement);
   }

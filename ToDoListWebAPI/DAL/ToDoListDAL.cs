@@ -20,7 +20,6 @@ namespace ToDoListWebAPI.DAL
         #region Select Data - GetData()
         public DataTable GetData()
         {
-
             string strConn = _configuration["ConnectionStrings:ToDoListAppCon"];
             SqlConnection myConn = new SqlConnection(strConn);
             DataTable table = new DataTable();

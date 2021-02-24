@@ -17,9 +17,97 @@ namespace ToDoListWebAPI.DAL
             _configuration = configuration;
         }
 
+        #region Check User -> Exists or Not
+        public bool UserExist(string email, string username, string password)
+        {
+            bool isuserExist = false;
+            string strConn = _configuration["ConnectionStrings:ToDoListAppCon"];
+            SqlConnection myConn = new SqlConnection(strConn);
+            try
+            {
+                string checkUserQuery = @"select count(*) from dbo.Users
+                                     where Email = @Email
+                                     and Username = @Username
+                                     and Password = @Password";
+
+                SqlCommand cmd = new SqlCommand(checkUserQuery, myConn);
+                cmd.Parameters.AddWithValue("@Email", email);
+                cmd.Parameters.AddWithValue("@Username", username);
+                cmd.Parameters.AddWithValue("@Password", password);
+                myConn.Open();
+
+                int UserExist = (int)cmd.ExecuteScalar();
+
+                if (UserExist > 0)
+                {
+                    isuserExist = true;
+                    return isuserExist;
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                myConn.Close();
+            }
+            return isuserExist;
+        }
+        #endregion
+
+        #region Check User Role
+        public string UserRole(string Email)
+        {
+            string Role = "";
+            string strConn = _configuration["ConnectionStrings:ToDoListAppCon"];
+            SqlConnection myConn = new SqlConnection(strConn);
+            try
+            {
+                string checkUserQuery = @"select Roles from dbo.Users
+                                     where Email = @Email";
+
+                SqlCommand cmd = new SqlCommand(checkUserQuery, myConn);
+                cmd.Parameters.AddWithValue("@Email", Email);
+                myConn.Open();
+
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    Role = (string)reader.GetValue(0);
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                myConn.Close();
+            }
+            return Role;
+        }
+        #endregion
+
+        #region Get User for Login
+        public AppUser Get(AppUser _user)
+            {
+            var users = new List<AppUser>();
+            string role = UserRole(_user.Email);
+
+            if (!UserExist(_user.Email, _user.Username, _user.Password))
+            {
+                return null;
+            }
+            users.Add(new AppUser { Email = _user.Email, Username = _user.Username, Password = _user.Password, Roles = role });
+            return users.Where(x => x.Username == x.Username && x.Password == x.Password).FirstOrDefault();
+
+        }
+        #endregion
 
         #region Create User - Post
-        public string CreateLogging(Logging log)
+        public string CreateUser(AppUser log)
         {
             string result = "";
             bool isCreated = false;
@@ -27,26 +115,21 @@ namespace ToDoListWebAPI.DAL
             SqlConnection myConn = new SqlConnection(strConn);
             try
             {
-                string createQuery = @"insert into dbo.Users (Email, Username, Password, User_Type) values 
-                                (@Email, @Username, @Password, @User_Type)";
-
-                if(log.Username.Contains("RJ"))
-                {
-                    log.User_Type = true;
-                }
+                string createQuery = @"insert into dbo.Users (Email, Username, Password, Roles) values 
+                                (@Email, @Username, @Password, @Roles)";
 
                 SqlCommand cmd = new SqlCommand(createQuery, myConn);
                 cmd.Parameters.AddWithValue("@Email", log.Email);
                 cmd.Parameters.AddWithValue("@Username", log.Username);
                 cmd.Parameters.AddWithValue("@Password", log.Password);
-                cmd.Parameters.AddWithValue("@User_Type", log.User_Type);
+                cmd.Parameters.AddWithValue("@Roles", "Standard");
 
                 string checkEmail = @"select count(*) from dbo.Users
                                     where Email = @Email";
 
-                SqlCommand email_check_cmd = new SqlCommand(checkEmail,myConn);
+                SqlCommand email_check_cmd = new SqlCommand(checkEmail, myConn);
                 email_check_cmd.Parameters.AddWithValue("@Email", log.Email);
-                
+
                 myConn.Open();
 
                 int UserExist = (int)email_check_cmd.ExecuteScalar();
@@ -55,21 +138,11 @@ namespace ToDoListWebAPI.DAL
 
                 isCreated = rows > 0;
 
-                if (UserExist == 0 && log.Email != null)
-                {
-                    result = "Admin User was created successfully";
-                }
-                else if (UserExist == 0 && log.Email != null)
-                {
-                    log.User_Type = false;
-                    result = "Normal User was created sucessfully";
-                }
-                else
-                {
-                    result = "Can't create User";
-                }
+                // Se o UserExit for 0 significa que não existe nenhum Email, logo pode ser criado um novo!!
+                result = (UserExist == 0 && log.Email != null) ? "User was created successfully" : "Can't create User";
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex);
             }
@@ -81,23 +154,23 @@ namespace ToDoListWebAPI.DAL
         }
         #endregion
 
-        #region Check User - Get
-        public DataTable GetLoggingUsers()
+        #region Get All Users
+        public DataTable GetAllUsers()
         {
             string strConn = _configuration["ConnectionStrings:ToDoListAppCon"];
             SqlConnection myConn = new SqlConnection(strConn);
             DataTable table = new DataTable();
             try
             {
-                string usersQuery = @"select * from dbo.Users";
-                SqlCommand cmd = new SqlCommand(usersQuery,myConn);
+                string getUsersQuery = @"select * from dbo.Users";
+                SqlCommand cmd = new SqlCommand(getUsersQuery, myConn);
                 SqlDataAdapter adapter = new SqlDataAdapter(cmd);
                 myConn.Open();
                 adapter.Fill(table);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Console.WriteLine(ex.Message);
             }
             finally
             {
@@ -108,7 +181,7 @@ namespace ToDoListWebAPI.DAL
         #endregion
 
         #region Edit User - Put
-        public string EditUser(Logging log)
+        public string EditUser(AppUser log)
         {
             string result = "Can't Update User";
             bool isEdited = false;
@@ -122,7 +195,7 @@ namespace ToDoListWebAPI.DAL
                                         where Email = @Email";
                 SqlCommand cmd = new SqlCommand(editUserQuery, myConn);
                 cmd.Parameters.AddWithValue("@Email", log.Email);
-                cmd.Parameters.AddWithValue("@User_Type", log.User_Type);
+                cmd.Parameters.AddWithValue("@User_Type", log.Roles);
 
                 string checkEmail = @"select count(*) from dbo.Users
                                     where Email = @Email";
@@ -135,10 +208,13 @@ namespace ToDoListWebAPI.DAL
 
                 int rows = cmd.ExecuteNonQuery();
 
-                // if(rows>0) {isEdit == true}
+                if (rows > 0) 
+                {
+                    isEdited = true;
+                }
                 isEdited = rows > 0;
 
-                if(UserExist == 0)
+                if (UserExist == 0)
                 {
                     result = "Your Email doens't exist!! Check it!";
                 }
@@ -147,7 +223,7 @@ namespace ToDoListWebAPI.DAL
                     result = "Updated Successfully";
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex);
             }
@@ -184,7 +260,7 @@ namespace ToDoListWebAPI.DAL
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Console.WriteLine(ex.Message);
             }
             finally
             {
