@@ -27,13 +27,9 @@ export class ServiceSharedService {
     return this.http.post(this.APIUrl + '/ToDoList', val);
   }
 
-  login(user : Users){
+  login(user : Users) {
     user.Roles = "Standard";
     return this.http.post(this.APIUrl + '/ToDoList/login', user);
-  }
-
-  getToken(){
-    return localStorage.getItem('token');
   }
 
   // tslint:disable-next-line: typedef

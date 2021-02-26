@@ -1,5 +1,4 @@
 import { ServiceSharedService } from './../service-shared.service';
-import { LogService } from './../logg.service';
 import { Component, OnInit } from '@angular/core';
 import { ListElement } from './list-interface.model';
 
@@ -15,8 +14,7 @@ export class ListComponent implements OnInit {
   
 
 
-  constructor(private logservice: LogService,
-              private serviceShare: ServiceSharedService) { }
+  constructor(private serviceShare: ServiceSharedService) { }
 
   // tslint:disable-next-line: typedef
   ngOnInit() {

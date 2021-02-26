@@ -11,18 +11,19 @@ import { Router } from '@angular/router';
 export class LoginComponent implements OnInit {
   users: Users [] = [];
 
-  constructor(private serviceShare: ServiceSharedService,
+  constructor(private _serviceShare: ServiceSharedService,
               private route: Router) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
   }
 
-  loginUser(email: HTMLInputElement, username: HTMLInputElement, password: HTMLInputElement ){
+  loginUser(email: HTMLInputElement, username: HTMLInputElement, password: HTMLInputElement )
+  {
     const _user: Users = {id: 0, Email: email.value, Username: username.value, Password: password.value, Roles: 'Standard' };
-    this.serviceShare.login(_user).subscribe(
+    this._serviceShare.login(_user).subscribe(
       (res: any)  => {
         localStorage.setItem('token', res.token);
-        this.route.navigate(['/users']);
+        // this.route.navigate(['/users']);
       },
       err => console.log(err)
     );

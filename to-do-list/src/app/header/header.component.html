@@ -7,6 +7,7 @@
     <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
         <a 
+            *ngIf="onLogin()"
             class="nav-link" 
             routerLink="todolist">ToDo List</a>
       </li>
@@ -14,5 +15,12 @@
         <a 
             class="nav-link" 
             routerLink="register">Create Account</a>
+      </li>
+
+      <li class="nav-item active">
+        <a
+          class="nav-link"
+          routerLink ="login"
+          (click)="onLogout()">Logout</a>
       </li>
     </ul>

@@ -1,5 +1,4 @@
 import { LoginComponent } from './login/login.component';
-import { LogService } from './logg.service';
 import { FormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -30,7 +29,7 @@ import { TokenInterceptor } from './token-interceptor.interceptor';
     FormsModule,
     HttpClientModule
   ],
-  providers: [LogService, ServiceSharedService,
+  providers: [ServiceSharedService,
   {
     provide: HTTP_INTERCEPTORS,
     useClass: TokenInterceptor,
