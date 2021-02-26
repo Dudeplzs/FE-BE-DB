@@ -12,6 +12,8 @@ import { RegisterComponent } from './register/register.component';
 import { UsersComponent } from './users/users.component';
 import { ServiceSharedService } from './service-shared.service';
 import { TokenInterceptor } from './token-interceptor.interceptor';
+import { AuthService } from './auth.service';
+import { AuthGuard } from './AuthGuard.service';
 
 
 @NgModule({
@@ -29,7 +31,7 @@ import { TokenInterceptor } from './token-interceptor.interceptor';
     FormsModule,
     HttpClientModule
   ],
-  providers: [ServiceSharedService,
+  providers: [ServiceSharedService,AuthService,AuthGuard,
   {
     provide: HTTP_INTERCEPTORS,
     useClass: TokenInterceptor,

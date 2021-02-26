@@ -34,6 +34,7 @@ export class AuthService{
 
     logout(){
         this.removeToken();
+        this._router.navigate(['/login']);
         return this.isLoggedin = false;
     }
 }

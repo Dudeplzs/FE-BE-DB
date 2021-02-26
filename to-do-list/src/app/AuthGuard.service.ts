@@ -1,24 +1,26 @@
-// import { Injectable } from '@angular/core';
-// import { CanActivate } from '@angular/router';
+import { Injectable } from '@angular/core';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
+import { Observable } from 'rxjs';
+import { AuthService } from './auth.service';
 
-// @Injectable()
-// export class AuthGuard implements CanActivate{
+@Injectable()
+export class AuthGuard implements CanActivate{
 
-//     constructor(private authService: AuthService,
-//         private router: Router) {}
+    constructor(private _authService: AuthService,
+                private _router: Router) {}
 
-// canActivate(route: ActivatedRouteSnapshot,
-//         state: RouterStateSnapshot): Observable<boolean> | Promise <boolean> | boolean {
-// return this.authService.isAuthenticated().then(
-//     (authenticated: boolean) => {
-//         if (authenticated) {
-//             return true;
-//         } else  {
-//             // tslint:disable-next-line: no-unused-expression
-//             this.router.navigate(['/']);
-//             return false;
-//         }
-//     }
-// );
-// }
-// }
+canActivate(route: ActivatedRouteSnapshot,
+        state: RouterStateSnapshot): Observable<boolean> | Promise <boolean> | boolean {
+return this._authService.isAuthenticated().then(
+    (authenticated: boolean) => {
+        if (authenticated) {
+            return true;
+        } else  {
+            // tslint:disable-next-line: no-unused-expression
+            this._router.navigate(['/login']);
+            return false;
+        }
+    }
+);
+}
+}
